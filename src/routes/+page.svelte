@@ -1,45 +1,54 @@
 <script lang="ts">
-	let interateCollection = ''
-	let m: number
-	let n: number
+	import {
+		NumberInput,
+		Label,
+		GradientButton,
+		DarkMode,
+		Radio,
+		Spinner,
+		Heading,
+		P,
+		Span
+	} from 'flowbite-svelte'
+	let m: number = 20
+	let n: number = 20
 	let iterateCollection: string = 'A'
-	let loadStatus: number = 0
+	let loadStatus: number = 2
 	let intersectionSize: number = 0
-	let computationTime: number = 0
+	let computationTime: number = 200
 	const run = () => {
 		console.log(m, n, iterateCollection, loadStatus, intersectionSize, computationTime)
 	}
 </script>
 
-<h1>Compute the Intersection of Collection A and Collection B</h1>
-<div class="operation">
-	<input type="number" bind:value={m} min="1" max="10000000" />
-	<input type="number" bind:value={n} min="1" max="10000000" />
-	<p>Choose which collection to iterate</p>
+<DarkMode />
+<Heading tag="h2">Compute the Intersection of Collection A and Collection B</Heading>
+<div class="operation mb-6 p-6 text-base">
+	<Label for="size-a" class="block mb-2">Size of collection A</Label>
+	<NumberInput id="size-a" color="green" type="number" bind:value={m} min="1" max="10000000" />
+	<Label for="size-b" class="block mb-2">Size of collection A</Label>
+	<NumberInput id="size-b" type="number" bind:value={n} min="1" max="10000000" />
+	<P>Choose which collection to iterate</P>
 	{#each ['A', 'B'] as collection}
-		<label>
-			<input type="radio" name="collections" value={collection} bind:group={iterateCollection} />
-
+		<Radio name="collections" value={collection} bind:group={iterateCollection}>
 			Collection {collection}
-		</label>
+		</Radio>
 	{/each}
-	<p>Then the Collection {iterateCollection === 'A' ? 'B' : 'A'} would be put into the Hash Set</p>
-	<button aria-label="run" on:click={run}>run</button>
+	<P>Then the Collection {iterateCollection === 'A' ? 'B' : 'A'} would be put into the Hash Set</P>
+	<GradientButton aria-label="run" shadow color="pinkToOrange" on:click={run}>run</GradientButton>
 </div>
 <div class="output">
-	<h1>The output would be seen here</h1>
+	<Heading tag="h2">The output would be seen here</Heading>
 	{#if loadStatus === 0}
-		<p>still waiting for the operation...</p>
+		<P>still waiting for the operation...</P>
 	{:else if loadStatus === 1}
-		<p>loading...</p>
+		<Spinner />
 	{:else}
-		<p>The size of the intersection is: ${intersectionSize}</p>
-		<p>And the computation takes ${computationTime} ms</p>
+		<P>The size of the intersection is: <Span gradient>{intersectionSize}</Span></P>
+		<P>And the computation takes <Span gradient>{computationTime} ms</Span></P>
 	{/if}
 </div>
+<div class="p-8" />
 
 <style>
-	h1 {
-		color: greenyellow;
-	}
 </style>
