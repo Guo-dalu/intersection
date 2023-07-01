@@ -2,7 +2,7 @@
 	import { Label, NumberInput, Helper } from 'flowbite-svelte'
 	import { MIN_SIZE, MAX_SIZE } from '../constants'
 	// for user experience, better not input a really large number
-	// unless you insist... so it's not validated when submitting
+	// validate when submitting
 	const TIPS = 'better input an interger between 1 to 10000000'
 	export let size = 20
 	export let label = ''
@@ -11,9 +11,9 @@
 </script>
 
 <div class={style + 'md:w-1/2 lg:w-1/3 font-light'}>
-	<Label for="size-b" class="block mb-2">{label}</Label>
+	<Label for={label} class="block mb-2">{label}</Label>
 	<NumberInput
-		id="size-b"
+		id={label}
 		type="number"
 		bind:value={size}
 		min={MIN_SIZE}
