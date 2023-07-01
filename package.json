@@ -10,8 +10,10 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test:unit": "vitest",
+		"pre-commit": "vitest run",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
-		"format": "prettier --plugin-search-dir . --write ."
+		"format": "prettier --plugin-search-dir . --write .",
+		"prepare": "husky install"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.28.1",
@@ -44,10 +46,5 @@
 		"flowbite": "^1.6.6",
 		"flowbite-svelte": "^0.39.1",
 		"tailwind-merge": "^1.13.2"
-	},
-	"husky": {
-		"hooks": {
-			"pre-commit": "npm run unit:test"
-		}
 	}
 }
