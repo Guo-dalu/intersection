@@ -1,4 +1,4 @@
-import type { COLLECTION_NAME, IntersectionResult } from '../app'
+import type { IntersectionParams, IntersectionResult } from '../app'
 
 /**
  * Calculates the number of elements in arr1 that are also in arr2
@@ -26,30 +26,28 @@ const getRandomArr = (size: number): number[] => {
 	return Array.from({ length: size }).map(() => Math.round(Math.random() * (size - 1)))
 }
 
-export const runIntersection = (
-	size1: number,
-	size2: number,
-	iterateCollection: COLLECTION_NAME
-): Promise<IntersectionResult> | void => {
-	return new Promise((resolve) => {
-		try {
-			const startTime = +new Date()
-			// use setTimeout to prevent it block the main thread
-			setTimeout(() => {
-				const iterateCollectionSize = iterateCollection === 'A' ? size1 : size2
-				const setCollectionSize = iterateCollection === 'B' ? size1 : size2
-				const commonSize = getIntersection(
-					getRandomArr(iterateCollectionSize),
-					getRandomArr(setCollectionSize)
-				)
-				const endTime = +new Date()
-				resolve({
-					time: endTime - startTime,
-					commonSize
-				})
-			})
-		} catch (e) {
-			console.error('error in runIntersection', e)
-		}
-	})
+/** with collection1 of size1 and collection2 of size2, and which one to iterate over
+ * get the size of the intersection aand the time cost of the function
+ *
+ * @param {IntersectionParams} param
+ * @returns {IntersectionResult} result
+ */
+export const runIntersection = ({
+	size1,
+	size2,
+	iterateCollection
+}: IntersectionParams): IntersectionResult => {
+	const startTime = performance.now()
+
+	const iterateCollectionSize = iterateCollection === 'A' ? size1 : size2
+	const setCollectionSize = iterateCollection === 'B' ? size1 : size2
+	const commonSize = getIntersection(
+		getRandomArr(iterateCollectionSize),
+		getRandomArr(setCollectionSize)
+	)
+	const endTime = performance.now()
+	return {
+		time: endTime - startTime,
+		commonSize
+	}
 }
