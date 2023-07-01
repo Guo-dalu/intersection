@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
+	import { onMount, onDestroy } from 'svelte'
 	import { GradientButton, DarkMode, Radio, Spinner, Heading, P, Modal } from 'flowbite-svelte'
 	import type { CollectionName } from '../app'
 	import SizeInput from '../components/SizeInput.svelte'
@@ -19,6 +19,9 @@
 		worker = new IntersectionWorker.default()
 	}
 	onMount(loadWorker)
+	onDestroy(() => {
+		worker?.terminate()
+	})
 
 	const run = async () => {
 		loaded = false
