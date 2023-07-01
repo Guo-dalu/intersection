@@ -9,5 +9,11 @@ declare global {
 	}
 }
 
-export {};
+export {}
 
+export type COLLECTION_NAME = 'A' | 'B'
+
+export type IntersectionResult = {
+	time: number // ms
+	commonSize: number // size of the intersection
+}
