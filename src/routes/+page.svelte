@@ -1,29 +1,44 @@
 <script lang="ts">
+	import { onMount } from 'svelte'
 	import { GradientButton, DarkMode, Radio, Spinner, Heading, P, Modal } from 'flowbite-svelte'
+	import type { CollectionName } from '../app'
 	import SizeInput from '../components/SizeInput.svelte'
-	import { runIntersection } from '../utils/getIntersection'
-	import type { COLLECTION_NAME, IntersectionResult } from '../app'
+	import { RUN_SINGE } from '../constants'
 
-	let size1 = 1099990
-	let size2 = 1099990
+	let size1 = 100
+	let size2 = 100
 	let iterateCollection: 'A' | 'B' = 'A'
 	let loaded = true
 	let isModalOpen = false
 	let intersectionSize = 0
 	let computationTime = 200
+	let worker: Worker | undefined
+
+	const loadWorker = async () => {
+		const IntersectionWorker = await import('$lib/worker?worker')
+		worker = new IntersectionWorker.default()
+	}
+	onMount(loadWorker)
+
 	const run = async () => {
 		loaded = false
 		isModalOpen = true
-		const { time, commonSize } = (await runIntersection(
-			size1,
-			size2,
-			iterateCollection
-		)) as IntersectionResult
-		computationTime = time
-		intersectionSize = commonSize
-		loaded = true
+		;(worker as Worker).postMessage({
+			message: RUN_SINGE,
+			data: {
+				size1,
+				size2,
+				iterateCollection
+			}
+		})
+		;(worker as Worker).onmessage = (e: MessageEvent) => {
+			const { time, commonSize } = e.data.data
+			computationTime = time
+			intersectionSize = commonSize
+			loaded = true
+		}
 	}
-	const getOperation = (iterateCollection: COLLECTION_NAME, collection: COLLECTION_NAME): string =>
+	const getOperation = (iterateCollection: CollectionName, collection: CollectionName): string =>
 		iterateCollection === collection ? 'iterate' : 'push into the Hash Set'
 </script>
 
@@ -68,7 +83,6 @@
 		{/if}
 	</Modal>
 </main>
-<Spinner />
 
 <style>
 	.gradientcolor {
