@@ -2,6 +2,7 @@ import type { IntersectionParams, IntersectionResult } from '../app'
 
 /**
  * Calculates the number of elements in arr1 that are also in arr2
+ * do not care duplicate numbers, so if use this to compute the intersection size then which one to iterate matters
  *
  * @param {T[]} arr1 the array to be interate
  * @param {T[]} arr2 the array to be put into HashSet
