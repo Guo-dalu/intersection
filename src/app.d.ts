@@ -1,4 +1,4 @@
-import { RUN_SINGE, RUN_MULTIPLE } from './constants'
+import { RUN_SINGE, RUN_MULTIPLE, ERROR_FLAG } from './constants'
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 declare global {
@@ -24,7 +24,29 @@ export interface IntersectionParams {
 	size2: number
 	iterateCollection: CollectionName
 }
+
+export interface MultipleIntersectionParams {
+	iterateCollection: CollectionName
+	times: number
+	min?: number
+	max?: number
+}
+
+export type MultipleIntersectionItem = IntersectionResult & { size1: number; size2: number }
+
+export type MultipleIntersectionResult = MultipleIntersectionItem[]
+
 export interface MessageData {
-	message: RUN_SINGE | RUN_MULTIPLE
-	data: IntersectionParams | (IntersectionParams & { times: number }) | IntersectionResult
+	message: RUN_SINGE | RUN_MULTIPLE | ERROR_FLAG
+	data:
+		| IntersectionParams
+		| IntersectionResult
+		| MultipleIntersectionParams
+		| MultipleIntersectionResult
+}
+
+export type Page = {
+	worker?: Worker
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	Plotly?: any
 }

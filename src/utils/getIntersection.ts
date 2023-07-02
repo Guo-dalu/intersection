@@ -1,4 +1,10 @@
-import type { IntersectionParams, IntersectionResult } from '../app'
+import type {
+	IntersectionParams,
+	IntersectionResult,
+	MultipleIntersectionParams,
+	MultipleIntersectionResult
+} from '../app'
+import { STATISTIC_MAX_SIZE, STATISTIC_MIN_SIZE } from '../constants'
 
 /**
  * Calculates the number of elements in arr1 that are also in arr2
@@ -27,6 +33,18 @@ const getRandomArr = (size: number): number[] => {
 	return Array.from({ length: size }).map(() => Math.round(Math.random() * (size - 1)))
 }
 
+/**
+ *
+ * @param {min?:number, max?:number} {min, max}
+ * @returns random integer betwwen min and max
+ */
+export const getRandomInteger = ({ min = 0, max = 1 }: { min?: number; max?: number }): number => {
+	if (max <= min) {
+		throw new Error('max should be greater than min')
+	}
+	return min + Math.round(Math.random() * (max - min))
+}
+
 /** with collection1 of size1 and collection2 of size2, and which one to iterate over
  * get the size of the intersection aand the time cost of the function
  *
@@ -51,4 +69,26 @@ export const runIntersection = ({
 		time: endTime - startTime,
 		commonSize
 	}
+}
+
+export const getMultipleIntersectionData = ({
+	min = STATISTIC_MIN_SIZE,
+	max = STATISTIC_MAX_SIZE,
+	times,
+	iterateCollection
+}: MultipleIntersectionParams): MultipleIntersectionResult => {
+	return Array.from({ length: times }).map(() => {
+		const arr1 = getRandomArr(getRandomInteger({ min, max }))
+		const arr2 = getRandomArr(getRandomInteger({ min, max }))
+		const size1 = arr1.length,
+			size2 = arr2.length
+		const { time, commonSize } = runIntersection({ size1, size2, iterateCollection })
+		console.log('~', time)
+		return {
+			size1,
+			size2,
+			time,
+			commonSize
+		}
+	})
 }

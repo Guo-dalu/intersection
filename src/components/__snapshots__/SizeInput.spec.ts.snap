@@ -22,7 +22,7 @@ exports[`SizeInput Component > should render correctly 1`] = `
         id="size input"
         max="1000000000"
         min="1"
-        placeholder="better input an interger between 1 to 10000000"
+        placeholder="please input an interger between 1 to 10000000"
         type="number"
       />
        
