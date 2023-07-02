@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import { Heading, P, GradientButton, Spinner, Hr } from 'flowbite-svelte'
-	import type { CollectionName, MultipleIntersectionResult, Page } from '../../app'
+	import type { CollectionName, MultipleIntersectionResult } from '../../app'
+	import { IntersectionWorker } from '../../stores'
 	import Punchline from '../../components/Punchline.svelte'
 	import Alert from '../../components/Alert.svelte'
 	import CollectionRadio from '../../components/CollectionRadio.svelte'
@@ -18,25 +19,27 @@
 	let loaded = true
 	let hasAlert = false
 	let intersectionList: MultipleIntersectionResult = []
-	let page: Page = {}
+	let _worker: null | Worker = null
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	let Plotly: any
 
 	let plotElement2D: undefined | HTMLElement
 	let plotElement3D: undefined | HTMLElement
 
-	const messageHander = (e: MessageEvent) => {
+	const messageHandler = (e: MessageEvent) => {
 		if (e.data.message === ERROR_FLAG) {
 			hasAlert = true
 			loaded = true
 			return
 		}
 		intersectionList = e.data.data
-		console.log(intersectionList)
 		const timeList = intersectionList.map((v) => v.time)
 		const sizeSumList = intersectionList.map((v) => v.size1 + v.size2)
 		const size1List = intersectionList.map((v) => v.size1)
 		const size2List = intersectionList.map((v) => v.size2)
-		if (plotElement2D && page.Plotly) {
-			page.Plotly.newPlot(
+
+		if (plotElement2D && Plotly) {
+			Plotly.newPlot(
 				plotElement2D,
 				[
 					{
@@ -68,8 +71,8 @@
 				}
 			)
 		}
-		if (plotElement3D && page.Plotly) {
-			page.Plotly.newPlot(
+		if (plotElement3D && Plotly) {
+			Plotly.newPlot(
 				plotElement3D,
 				[
 					{
@@ -96,28 +99,29 @@
 		loaded = true
 	}
 
-	const loadWorker = async () => {
-		const IntersectionWorker = await import('$lib/worker?worker')
-		console.log('load worker')
-		page.worker = new IntersectionWorker.default()
-		page.worker.onmessage = messageHander
-	}
+	const unsubscribe = IntersectionWorker.subscribe((_Worker) => {
+		console.log(' in statistic', _Worker)
+		if (!_Worker) {
+			return
+		}
+		_worker = new _Worker()
+		_worker.onmessage = messageHandler
+	})
 
 	const loadPlotly = async () => {
-		page.Plotly = await import('plotly.js-dist')
-		console.log('plot loaded')
+		Plotly = await import('plotly.js-dist')
 	}
 
 	const clearPlot = () => {
-		page.Plotly.purge(plotElement2D)
-		page.Plotly.purge(plotElement3D)
+		Plotly.purge(plotElement2D)
+		Plotly.purge(plotElement3D)
 	}
 
 	onMount(() => {
-		loadWorker()
 		loadPlotly()
 		return () => {
-			page.worker?.terminate()
+			_worker?.terminate()
+			unsubscribe()
 			clearPlot()
 		}
 	})
@@ -126,7 +130,7 @@
 		loaded = false
 		intersectionList = []
 		clearPlot()
-		;(page.worker as Worker).postMessage({
+		_worker?.postMessage({
 			message: RUN_MULTIPLE,
 			data: {
 				times,
@@ -159,12 +163,12 @@
 	on:click={run}>And run the experiment {times} times!</GradientButton
 >
 
-<P class="text-center mt-4 font-light text-lg">The result will be...</P>
+<P class="text-center mt-4 mb-6 font-light text-lg">The result will be...</P>
 {#if !loaded && intersectionList.length === 0}
-	<Spinner class="block mx-auto mt-6 w-16 h-16" />
+	<Spinner class="block mx-auto w-16 h-16" />
 {/if}
 
-<div bind:this={plotElement2D} />
-<Hr hrClass="my-8" />
+<div bind:this={plotElement2D} class="overflow-hidden" />
+<Hr hrClass="my-2" />
 <div bind:this={plotElement3D} />
 <Alert {hasAlert} />

@@ -7,4 +7,4 @@ export const RUN_MULTIPLE = 'runMultipleIntersection'
 export const SINGLE_RESULT = 'singleIntersectionResult'
 export const MULTIPLE_RESULT = 'multipleIntersectionResult'
 export const ERROR_FLAG = 'error'
-export const EXPERIMENT_TIMES = 30
+export const EXPERIMENT_TIMES = 5

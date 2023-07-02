@@ -5,9 +5,11 @@
 </script>
 
 {#each ['A', 'B'] as collection}
-	<Radio name="collections" value={collection} bind:group={iterateCollection}>
-		<P class="font-light mt-2">Collection {collection}</P>
-	</Radio>
+	<div class="w-max mx-auto mt-3">
+		<Radio name="collections" value={collection} bind:group={iterateCollection}>
+			<P class="font-light">Collection {collection}</P>
+		</Radio>
+	</div>
 {/each}
 <P class="mt-4 font-light"
 	>Then the Collection <Punchline>{iterateCollection === 'A' ? 'B' : 'A'}</Punchline> would be put into

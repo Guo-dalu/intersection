@@ -83,7 +83,6 @@ export const getMultipleIntersectionData = ({
 		const size1 = arr1.length,
 			size2 = arr2.length
 		const { time, commonSize } = runIntersection({ size1, size2, iterateCollection })
-		console.log('~', time)
 		return {
 			size1,
 			size2,

@@ -44,9 +44,3 @@ export interface MessageData {
 		| MultipleIntersectionParams
 		| MultipleIntersectionResult
 }
-
-export type Page = {
-	worker?: Worker
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	Plotly?: any
-}
