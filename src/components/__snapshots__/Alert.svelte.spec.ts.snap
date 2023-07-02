@@ -1,0 +1,10 @@
+// Vitest Snapshot v1
+
+exports[`Alert Component > should render correctly 1`] = `
+<body>
+  <div>
+    
+    <!--&lt;Alert&gt;-->
+  </div>
+</body>
+`;

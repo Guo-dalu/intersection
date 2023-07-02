@@ -3,7 +3,7 @@
 	import { MIN_SIZE, MAX_SIZE } from '../constants'
 	// for user experience, better not input a really large number
 	// validate when submitting
-	const TIPS = 'better input an interger between 1 to 10000000'
+	const TIPS = 'please input an interger between 1 to 10000000'
 	export let size = 20
 	export let label = ''
 	export let style = ''

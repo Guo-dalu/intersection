@@ -1,0 +1,12 @@
+// Vitest Snapshot v1
+
+exports[`Punchline Component > should render correctly 1`] = `
+<body>
+  <div>
+    <span
+      class="gradientcolor s-qaK2xGRD7wDi"
+    />
+    <!--&lt;Punchline&gt;-->
+  </div>
+</body>
+`;
