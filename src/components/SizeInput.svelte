@@ -10,7 +10,7 @@
 	$: isValid = Number.isInteger(size) && size >= MIN_SIZE && size <= MAX_SIZE
 </script>
 
-<div class={style + 'md:w-1/2 lg:w-1/3 font-light'}>
+<div class={style + ' md:w-1/2 lg:w-1/3 font-light'}>
 	<Label for={label} class="block mb-2">{label}</Label>
 	<NumberInput
 		aria-label={label}

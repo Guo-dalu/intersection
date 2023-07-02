@@ -149,10 +149,8 @@
 		>{STATISTIC_MIN_SIZE} and {STATISTIC_MAX_SIZE}</Punchline
 	> to Collection A and Collection B
 </P>
-<div class="mx-auto w-64 sm:w-1/2">
-	<P class="mt-4 text-lg">You would choose which collection to iterate</P>
-	<CollectionRadio bind:iterateCollection />
-</div>
+<P class="mt-4 text-lg text-center">You would choose which collection to iterate</P>
+<CollectionRadio bind:iterateCollection />
 
 <GradientButton
 	class="mt-4 font-bold block mx-auto"

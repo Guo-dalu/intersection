@@ -67,15 +67,15 @@
 	href="/statistic"
 	class="mt-1 w-32">Deep into &rarr;</GradientButton
 >
-<Heading tag="h3" class="font-light mt-12 mb-4"
+<Heading tag="h3" class="font-light mt-12 mb-4 text-center"
 	>Compute the Intersection of Collection A and Collection B</Heading
 >
-<SizeInput bind:size={size1} label="Size of collection A" style="mt-4" />
-<SizeInput bind:size={size2} label="Size of collection B" style="mt-4" />
-<P class="mt-4 font-light">Choose which collection to iterate</P>
+<SizeInput bind:size={size1} label="Size of collection A" style="mt-4 mx-auto" />
+<SizeInput bind:size={size2} label="Size of collection B" style="mt-4 mx-auto" />
+<P class="mt-4 font-light text-center">Choose which collection to iterate</P>
 <CollectionRadio bind:iterateCollection />
 <GradientButton
-	class="mt-4 font-bold w-20"
+	class="mt-4 font-bold w-20 block mx-auto"
 	aria-label="run"
 	shadow
 	disabled={isModalOpen}
