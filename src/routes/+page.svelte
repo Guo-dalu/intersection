@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
+	import { onDestroy } from 'svelte'
 	import { GradientButton, Spinner, Heading, P, Modal } from 'flowbite-svelte'
-	import type { CollectionName, Page } from '../app'
+	import type { CollectionName } from '../app'
+	import { IntersectionWorker } from '../stores'
 	import SizeInput from '../components/SizeInput.svelte'
 	import Alert from '../components/Alert.svelte'
 	import Punchline from '../components/Punchline.svelte'
@@ -16,13 +17,15 @@
 	let isModalOpen = false
 	let intersectionSize = 0
 	let computationTime = 200
-	let page: Page = { worker: undefined }
+	let _worker: null | Worker
 
-	const loadWorker = async () => {
-		const IntersectionWorker = await import('$lib/worker?worker')
-		console.log('load worker')
-		page.worker = new IntersectionWorker.default()
-		page.worker.onmessage = (e: MessageEvent) => {
+	const unsubscribe = IntersectionWorker.subscribe((_Worker) => {
+		console.log(' in +page', _Worker)
+		if (!_Worker) {
+			return
+		}
+		_worker = new _Worker()
+		_worker.onmessage = (e: MessageEvent) => {
 			if (e.data.message === ERROR_FLAG) {
 				hasAlert = true
 				isModalOpen = false
@@ -34,19 +37,17 @@
 			intersectionSize = commonSize
 			loaded = true
 		}
-	}
+	})
 
-	onMount(() => {
-		loadWorker()
-		return () => {
-			page.worker?.terminate()
-		}
+	onDestroy(() => {
+		_worker?.terminate()
+		unsubscribe()
 	})
 
 	const run = () => {
 		loaded = false
 		isModalOpen = true
-		;(page.worker as Worker).postMessage({
+		_worker?.postMessage({
 			message: RUN_SINGE,
 			data: {
 				size1,
@@ -59,6 +60,13 @@
 		iterateCollection === collection ? 'iterate' : 'push into the Hash Set'
 </script>
 
+<GradientButton
+	outline
+	aria-label="deep into"
+	color="pinkToOrange"
+	href="/statistic"
+	class="mt-1 w-32">Deep into &rarr;</GradientButton
+>
 <Heading tag="h3" class="font-light mt-12 mb-4"
 	>Compute the Intersection of Collection A and Collection B</Heading
 >
@@ -70,16 +78,9 @@
 	class="mt-4 font-bold w-20"
 	aria-label="run"
 	shadow
-	disabled={isModalOpen || !loaded}
+	disabled={isModalOpen}
 	color="pinkToOrange"
 	on:click={run}>run</GradientButton
->
-<GradientButton
-	outline
-	aria-label="deep into"
-	color="pinkToOrange"
-	href="/statistic"
-	class="mt-5 w-32">Deep into &rarr;</GradientButton
 >
 <Alert bind:hasAlert />
 <Modal bind:open={isModalOpen} autoclose class="py-4">
