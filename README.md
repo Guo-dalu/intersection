@@ -1,4 +1,6 @@
-Compute the intersection of two collections
+# Compute the intersection of two collections
+
+My first try with Svelte and TailwindCSS:))
 
 ## routes
 
@@ -11,10 +13,14 @@ Compute the intersection of two collections
 - Framework: `Svelte`
 - CSS: `TailwindCSS`
 - Component Library: `Flowbite-svelte`
+- Plot Library: `Plotly` [website](https://plotly.com/javascript/)
 - Add `Web Worker` for computation to prevent blocking the main thread
 - With unit tests by `vitest` and e2e tests by `playwright`
+- Deployed on git pages: https://guo-dalu.github.io/intersection/
 
 ## Developing
+
+**Attention! flowbite-svelte@0.39.1: wanted: {"node":">=16.0.0","npm":">=7.0.0"}**
 
 ```bash
 npm install
