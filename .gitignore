@@ -1,0 +1,4 @@
+build
+.svelte-kit
+.husky
+node_modules
