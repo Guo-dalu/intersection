@@ -101,7 +101,6 @@
 	}
 
 	const unsubscribe = IntersectionWorker.subscribe((_Worker) => {
-		console.log(' in statistic', _Worker)
 		if (!_Worker) {
 			return
 		}
@@ -158,7 +157,7 @@
 	aria-label="run"
 	shadow
 	color="pinkToOrange"
-	disable={!loaded}
+	disabled={!loaded}
 	on:click={run}>And run the experiment {times} times!</GradientButton
 >
 
