@@ -16,6 +16,8 @@ Compute the intersection of two collections
 
 ## Developing
 
+**Attention! flowbite-svelte@0.39.1: wanted: {"node":">=16.0.0","npm":">=7.0.0"}**
+
 ```bash
 npm install
 npm run dev
