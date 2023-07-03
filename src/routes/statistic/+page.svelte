@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import { Heading, P, GradientButton, Spinner, Hr } from 'flowbite-svelte'
+	import { base } from '$app/paths'
 	import type { CollectionName, MultipleIntersectionResult } from '../../app'
 	import { IntersectionWorker } from '../../stores'
 	import Punchline from '../../components/Punchline.svelte'
@@ -140,7 +141,7 @@
 	}
 </script>
 
-<GradientButton outline aria-label="go back" color="pinkToOrange" href="/" class="mt-1 w-32"
+<GradientButton outline aria-label="go back" color="pinkToOrange" href="{base}/" class="mt-1 w-32"
 	>Go back &larr;</GradientButton
 >
 <Heading tag="h3" class="font-light text-center mt-9">Now let's try some fancy things!</Heading>

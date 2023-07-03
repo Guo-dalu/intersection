@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte'
 	import { GradientButton, Spinner, Heading, P, Modal } from 'flowbite-svelte'
+	import { base } from '$app/paths'
 	import type { CollectionName } from '../app'
 	import { IntersectionWorker } from '../stores'
 	import isSizeValid from '../utils/isSizeValid'
@@ -71,7 +72,7 @@
 	outline
 	aria-label="deep into"
 	color="pinkToOrange"
-	href="/statistic"
+	href="{base}/statistic"
 	class="mt-1 w-32">Deep into &rarr;</GradientButton
 >
 <Heading tag="h3" class="font-light mt-12 mb-4 text-center"
