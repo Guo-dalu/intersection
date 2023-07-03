@@ -16,7 +16,7 @@ export type CollectionName = 'A' | 'B'
 
 export type IntersectionResult = {
 	time: number // ms
-	commonSize: number // size of the intersection
+	commonSize?: number // size of the intersection
 }
 
 export interface IntersectionParams {
@@ -26,15 +26,21 @@ export interface IntersectionParams {
 }
 
 export interface MultipleIntersectionParams {
-	iterateCollection: CollectionName
 	times: number
-	min?: number
-	max?: number
+	smallRange?: number[]
+	largeRange?: number[]
 }
 
-export type MultipleIntersectionItem = IntersectionResult & { size1: number; size2: number }
+export type MultipleIntersectionItem = IntersectionResult & {
+	size1: number
+	size2: number
+	sum: number
+}
 
-export type MultipleIntersectionResult = MultipleIntersectionItem[]
+export type MultipleIntersectionResult = {
+	smallToSetList: MultipleIntersectionItem[]
+	largeToSetList: MultipleIntersectionItem[]
+}
 
 export interface MessageData {
 	message: RUN_SINGE | RUN_MULTIPLE | ERROR_FLAG
