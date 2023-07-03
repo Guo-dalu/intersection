@@ -113,8 +113,8 @@
 	}
 
 	const clearPlot = () => {
-		Plotly.purge(plotElement2D)
-		Plotly.purge(plotElement3D)
+		Plotly?.purge(plotElement2D)
+		Plotly?.purge(plotElement3D)
 	}
 
 	onMount(() => {
