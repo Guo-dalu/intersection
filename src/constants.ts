@@ -1,5 +1,6 @@
 export const MIN_SIZE = 1
-export const MAX_SIZE = 1000000000
+export const MAX_SIZE = 100000000
+export const TIPS = `please input an interger between ${MIN_SIZE} to ${MAX_SIZE}`
 export const STATISTIC_MIN_SIZE = 1000
 export const STATISTIC_MAX_SIZE = 500000
 export const RUN_SINGE = 'runSingleIntersection'
@@ -8,4 +9,3 @@ export const SINGLE_RESULT = 'singleIntersectionResult'
 export const MULTIPLE_RESULT = 'multipleIntersectionResult'
 export const ERROR_FLAG = 'error'
 export const EXPERIMENT_TIMES = 30
-export const TIPS = 'please input an interger between 1 to 10000000'
