@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { Label, NumberInput, Helper } from 'flowbite-svelte'
-	import { MIN_SIZE, MAX_SIZE } from '../constants'
+	import { MIN_SIZE, MAX_SIZE, TIPS } from '../constants'
+	import isSizeValid from '../utils/isSizeValid'
 	// for user experience, better not input a really large number
 	// validate when submitting
-	const TIPS = 'please input an interger between 1 to 10000000'
 	export let size = 20
 	export let label = ''
 	export let style = ''
-	$: isValid = Number.isInteger(size) && size >= MIN_SIZE && size <= MAX_SIZE
+	$: isValid = isSizeValid(size)
 </script>
 
 <div class={style + ' md:w-1/2 lg:w-1/3 font-light'}>

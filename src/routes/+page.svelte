@@ -3,11 +3,12 @@
 	import { GradientButton, Spinner, Heading, P, Modal } from 'flowbite-svelte'
 	import type { CollectionName } from '../app'
 	import { IntersectionWorker } from '../stores'
+	import isSizeValid from '../utils/isSizeValid'
 	import SizeInput from '../components/SizeInput.svelte'
 	import Alert from '../components/Alert.svelte'
 	import Punchline from '../components/Punchline.svelte'
 	import CollectionRadio from '../components/CollectionRadio.svelte'
-	import { ERROR_FLAG, RUN_SINGE } from '../constants'
+	import { ERROR_FLAG, RUN_SINGE, TIPS } from '../constants'
 
 	let size1 = 100
 	let size2 = 100
@@ -17,10 +18,10 @@
 	let isModalOpen = false
 	let intersectionSize = 0
 	let computationTime = 200
+	let tips = ''
 	let _worker: null | Worker
 
 	const unsubscribe = IntersectionWorker.subscribe((_Worker) => {
-		console.log(' in +page', _Worker)
 		if (!_Worker) {
 			return
 		}
@@ -28,6 +29,7 @@
 		_worker.onmessage = (e: MessageEvent) => {
 			if (e.data.message === ERROR_FLAG) {
 				hasAlert = true
+				tips = 'Error Happened from the Web Worker!'
 				isModalOpen = false
 				loaded = true
 				return
@@ -45,6 +47,11 @@
 	})
 
 	const run = () => {
+		if ([size1, size2].some((v) => !isSizeValid(v))) {
+			hasAlert = true
+			tips = TIPS
+			return
+		}
 		loaded = false
 		isModalOpen = true
 		_worker?.postMessage({
@@ -82,7 +89,13 @@
 	color="pinkToOrange"
 	on:click={run}>run</GradientButton
 >
-<Alert bind:hasAlert />
+<Alert
+	{hasAlert}
+	{tips}
+	on:close={() => {
+		hasAlert = false
+	}}
+/>
 <Modal bind:open={isModalOpen} autoclose class="py-4">
 	<Heading tag="h5" class="font-light">
 		With a collection A of size <Punchline>{size1}</Punchline> to {getOperation(
