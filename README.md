@@ -2,6 +2,8 @@
 
 My first try with Svelte and TailwindCSS:))
 
+Hope you enjoy!
+
 ## routes
 
 - root /: Input the sizes of two collections and choose which one to iterate, then run the computation to get the size of the intersection and the time cost.
