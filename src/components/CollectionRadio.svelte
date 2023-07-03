@@ -13,5 +13,5 @@
 {/each}
 <P class="mt-4 font-light text-center"
 	>Then the Collection <Punchline>{iterateCollection === 'A' ? 'B' : 'A'}</Punchline> would be put into
-	the Hash Set
-</P>
+	the Hash Set</P
+>

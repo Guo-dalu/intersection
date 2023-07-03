@@ -1,25 +1,24 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
+	import { pluck } from 'rambda'
 	import { Heading, P, GradientButton, Spinner, Hr } from 'flowbite-svelte'
 	import { base } from '$app/paths'
 	import type { CollectionName, MultipleIntersectionResult } from '../../app'
 	import { IntersectionWorker } from '../../stores'
 	import Punchline from '../../components/Punchline.svelte'
 	import Alert from '../../components/Alert.svelte'
-	import CollectionRadio from '../../components/CollectionRadio.svelte'
 	import {
-		STATISTIC_MAX_SIZE,
-		STATISTIC_MIN_SIZE,
 		EXPERIMENT_TIMES,
 		RUN_MULTIPLE,
-		ERROR_FLAG
+		ERROR_FLAG,
+		STATISTIC_SMALL_SIZE_RANGE,
+		STATISTIC_LARGE_SIZE_RANGE
 	} from '../../constants'
 
 	let iterateCollection: CollectionName
 	let times = EXPERIMENT_TIMES
 	let loaded = true
 	let hasAlert = false
-	let intersectionList: MultipleIntersectionResult = []
 	let _worker: null | Worker = null
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let Plotly: any
@@ -28,76 +27,76 @@
 	let plotElement3D: undefined | HTMLElement
 
 	const messageHandler = (e: MessageEvent) => {
+		loaded = true
 		if (e.data.message === ERROR_FLAG) {
 			hasAlert = true
-			loaded = true
 			return
 		}
-		intersectionList = e.data.data
-		const timeList = intersectionList.map((v) => v.time)
-		const sizeSumList = intersectionList.map((v) => v.size1 + v.size2)
-		const size1List = intersectionList.map((v) => v.size1)
-		const size2List = intersectionList.map((v) => v.size2)
+		if (!plotElement2D || !plotElement3D || !Plotly) {
+			return
+		}
+		const { smallToSetList, largeToSetList } = e.data.data as MultipleIntersectionResult
 
-		if (plotElement2D && Plotly) {
-			Plotly.newPlot(
-				plotElement2D,
-				[
-					{
-						x: sizeSumList,
-						y: timeList,
-						mode: 'markers',
-						type: 'scatter',
-						name: 'TimeCost - Sum(Size1+Size2)'
-					},
-					{
-						x: size1List,
-						y: timeList,
-						mode: 'markers',
-						type: 'scatter',
-						name: 'TimeCost - Size1'
-					},
-					{
-						x: size2List,
-						y: timeList,
-						mode: 'markers',
-						type: 'scatter',
-						name: 'TimeCost - Size2'
-					}
-				],
+		Plotly.newPlot(
+			plotElement2D,
+			[
 				{
-					title: 'Scatter Plot of TimeCost = f(size1+size2) ',
-					yaxis: { title: 'Time Cost(ms)' },
-					legend: { orientation: 'h' }
-				}
-			)
-		}
-		if (plotElement3D && Plotly) {
-			Plotly.newPlot(
-				plotElement3D,
-				[
-					{
-						x: size1List,
-						y: size2List,
-						z: timeList,
-						mode: 'markers',
-						marker: {
-							size: 10
-						},
-						type: 'scatter3d'
-					}
-				],
+					x: pluck('sum', smallToSetList),
+					y: pluck('time', smallToSetList),
+					mode: 'markers',
+					type: 'scatter',
+					name: 'TimeCost - Sum(Size1+Size2) - with smaller Collection in Set'
+				},
 				{
-					title: '3D Scatter Plot of TimeCost = f(size1, size2)',
-					scene: {
-						xaxis: { title: 'size1' },
-						yaxis: { title: 'size2' },
-						zaxis: { title: 'Time Cost(ms)' }
-					}
+					x: pluck('sum', largeToSetList),
+					y: pluck('time', largeToSetList),
+					mode: 'markers',
+					type: 'scatter',
+					name: 'TimeCost - Sum(Size1+Size2) - with larger Collection in Set'
 				}
-			)
-		}
-		loaded = true
+			],
+			{
+				title: 'Scatter Plot of TimeCost = f(size1+size2) ',
+				yaxis: { title: 'Time Cost(ms)' },
+				legend: { orientation: 'h' }
+			}
+		)
+		Plotly.newPlot(
+			plotElement3D,
+			[
+				{
+					x: pluck('size1', smallToSetList),
+					y: pluck('size2', smallToSetList),
+					z: pluck('time', smallToSetList),
+					mode: 'markers',
+					marker: {
+						size: 10
+					},
+					type: 'scatter3d',
+					name: 'Time Cost with smaller Collection in Set'
+				},
+				{
+					x: pluck('size1', largeToSetList),
+					y: pluck('size2', largeToSetList),
+					z: pluck('time', largeToSetList),
+					mode: 'markers',
+					marker: {
+						size: 10
+					},
+					type: 'scatter3d',
+					name: 'Time Cost with larger Collection in Set'
+				}
+			],
+			{
+				title: '3D Scatter Plot of TimeCost = f(size1, size2)',
+				scene: {
+					xaxis: { title: 'size1' },
+					yaxis: { title: 'size2' },
+					zaxis: { title: 'Time Cost(ms)' }
+				},
+				legend: { orientation: 'h' }
+			}
+		)
 	}
 
 	const unsubscribe = IntersectionWorker.subscribe((_Worker) => {
@@ -128,7 +127,6 @@
 
 	const run = () => {
 		loaded = false
-		intersectionList = []
 		clearPlot()
 		_worker?.postMessage({
 			message: RUN_MULTIPLE,
@@ -144,13 +142,17 @@
 	>Go back &larr;</GradientButton
 >
 <Heading tag="h3" class="font-light text-center mt-9">Now let's try some fancy things!</Heading>
-<P class="text-center mt-6 text-lg">
-	We will randomly assign sizes between <Punchline
-		>{STATISTIC_MIN_SIZE} and {STATISTIC_MAX_SIZE}</Punchline
-	> to Collection A and Collection B
+<P class="text-center mt-6 text-lg lg:px-20 font-light">
+	We will randomly generate two collections. Collection A would have smaller size between <Punchline
+		>{STATISTIC_SMALL_SIZE_RANGE[0]} and {STATISTIC_SMALL_SIZE_RANGE[1]}</Punchline
+	>, and Collection B would have larger size betwwen <Punchline
+		>{STATISTIC_LARGE_SIZE_RANGE[0]} and {STATISTIC_LARGE_SIZE_RANGE[1]}</Punchline
+	>. Then we will compute the intersection of these 2 Collections in 2 ways, by iterating over
+	Collection A(and B in the Hash Set), and vice versa.
+</P><P class="text-center mt-4 text-lg lg:px-20 font-light"
+	>We will run each computation method <Punchline>{EXPERIMENT_TIMES}</Punchline>
+	times to measure its performance and determine the difference in time cost between the two approaches.
 </P>
-<P class="mt-4 text-lg text-center">You would choose which collection to iterate</P>
-<CollectionRadio bind:iterateCollection />
 
 <GradientButton
 	class="mt-4 font-bold block mx-auto"
@@ -158,11 +160,11 @@
 	shadow
 	color="pinkToOrange"
 	disabled={!loaded}
-	on:click={run}>And run the experiment {times} times!</GradientButton
+	on:click={run}>Run the experiment {times} times!</GradientButton
 >
 
 <P class="text-center mt-4 mb-6 font-light text-lg">The result will be...</P>
-{#if !loaded && intersectionList.length === 0}
+{#if !loaded}
 	<Spinner class="block mx-auto w-16 h-16" />
 {/if}
 

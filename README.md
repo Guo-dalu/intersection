@@ -7,7 +7,7 @@ Hope you enjoy!
 ## routes
 
 - root /: Input the sizes of two collections and choose which one to iterate, then run the computation to get the size of the intersection and the time cost.
-- statistic /statistic: Run it multiple times(default 30) and see the relationship between time cost the the sizes of collections.
+- statistic /statistic: Run it multiple times(default 30) and see the relationship between time cost the the sizes of collections, which highly depends on which collection to iterate/put into Hash Set.
 
 ## Features
 
@@ -19,6 +19,7 @@ Hope you enjoy!
 - Add `Web Worker` for computation to prevent blocking the main thread
 - With unit tests by `vitest` and e2e tests by `playwright`
 - Deployed on git pages: https://guo-dalu.github.io/intersection/
+- DarkMode
 
 ## Developing
 

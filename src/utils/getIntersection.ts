@@ -4,7 +4,22 @@ import type {
 	MultipleIntersectionParams,
 	MultipleIntersectionResult
 } from '../app'
-import { STATISTIC_MAX_SIZE, STATISTIC_MIN_SIZE } from '../constants'
+import { STATISTIC_LARGE_SIZE_RANGE, STATISTIC_SMALL_SIZE_RANGE } from '../constants'
+
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+// get the time cost of fn, unit ms
+export const measurePerformance =
+	<T extends any[], R>(fn: (...args: T) => R) =>
+	(...args: T): { result: R; time: number } => {
+		const startTime = performance.now()
+		const result = fn(...args)
+		const endTime = performance.now()
+		return {
+			result,
+			time: endTime - startTime
+		}
+	}
+/* eslint-disable */
 
 /**
  * Calculates the number of elements in arr1 that are also in arr2
@@ -15,12 +30,12 @@ import { STATISTIC_MAX_SIZE, STATISTIC_MIN_SIZE } from '../constants'
  * @returns {number} the number of the intersection of arr1 and arr2
  */
 export const getIntersection = <T>(arr1: T[], arr2: T[]): number => {
-	const set = new Set()
-	arr2.forEach((element) => {
-		set.add(element)
-	})
+	const set = new Set(arr2)
+
 	return arr1.filter((v) => set.has(v)).length
 }
+
+export const measureIntersection = measurePerformance(getIntersection)
 
 /**
  * Create a collection with the given size and filled with random number
@@ -56,38 +71,36 @@ export const runIntersection = ({
 	size2,
 	iterateCollection
 }: IntersectionParams): IntersectionResult => {
-	const startTime = performance.now()
-
 	const iterateCollectionSize = iterateCollection === 'A' ? size1 : size2
 	const setCollectionSize = iterateCollection === 'B' ? size1 : size2
-	const commonSize = getIntersection(
-		getRandomArr(iterateCollectionSize),
-		getRandomArr(setCollectionSize)
-	)
-	const endTime = performance.now()
+	const iterateArr = getRandomArr(iterateCollectionSize)
+	const hashSetArr = getRandomArr(setCollectionSize)
+
+	const { time, result } = measureIntersection(iterateArr, hashSetArr)
+
 	return {
-		time: endTime - startTime,
-		commonSize
+		time,
+		commonSize: result
 	}
 }
 
 export const getMultipleIntersectionData = ({
-	min = STATISTIC_MIN_SIZE,
-	max = STATISTIC_MAX_SIZE,
-	times,
-	iterateCollection
+	smallRange = STATISTIC_SMALL_SIZE_RANGE,
+	largeRange = STATISTIC_LARGE_SIZE_RANGE,
+	times
 }: MultipleIntersectionParams): MultipleIntersectionResult => {
-	return Array.from({ length: times }).map(() => {
-		const arr1 = getRandomArr(getRandomInteger({ min, max }))
-		const arr2 = getRandomArr(getRandomInteger({ min, max }))
-		const size1 = arr1.length,
-			size2 = arr2.length
-		const { time, commonSize } = runIntersection({ size1, size2, iterateCollection })
-		return {
-			size1,
-			size2,
-			time,
-			commonSize
-		}
-	})
+	const smallToSetList = [],
+		largeToSetList = []
+	for (let i = 0; i < times; i++) {
+		const size1 = getRandomInteger({ min: smallRange[0], max: smallRange[1] }),
+			size2 = getRandomInteger({ min: largeRange[0], max: largeRange[1] })
+		const sum = size1 + size2
+		const smallArr = getRandomArr(size1)
+		const largeArr = getRandomArr(size2)
+		const { time: largeToSetTime } = measureIntersection(smallArr, largeArr)
+		largeToSetList.push({ size1, size2, sum, time: largeToSetTime })
+		const { time: smallToSetTime } = measureIntersection(largeArr, smallArr)
+		smallToSetList.push({ size1, size2, sum, time: smallToSetTime })
+	}
+	return { smallToSetList, largeToSetList }
 }
