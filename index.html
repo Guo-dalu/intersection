@@ -11,7 +11,7 @@
       href="./_app/immutable/assets/CollectionRadio.57e10b7b.css"
       rel="stylesheet"
     />
-    <link rel="modulepreload" href="./_app/immutable/entry/start.bbc46d2b.js" />
+    <link rel="modulepreload" href="./dist/start.bbc46d2b.js" />
     <link
       rel="modulepreload"
       href="./_app/immutable/chunks/scheduler.03c2db9d.js"
@@ -28,7 +28,7 @@
       rel="modulepreload"
       href="./_app/immutable/chunks/paths.b37c24a1.js"
     />
-    <link rel="modulepreload" href="./_app/immutable/entry/app.4efee6f0.js" />
+    <link rel="modulepreload" href="./dist/app.4efee6f0.js" />
     <link
       rel="modulepreload"
       href="./_app/immutable/chunks/preload-helper.41c905a7.js"
@@ -210,8 +210,8 @@
           const data = [null, null]
 
           Promise.all([
-            import('./_app/immutable/entry/start.bbc46d2b.js'),
-            import('./_app/immutable/entry/app.4efee6f0.js'),
+            import('./dist/start.bbc46d2b.js'),
+            import('./dist/app.4efee6f0.js'),
           ]).then(([kit, app]) => {
             kit.start(app, element, {
               node_ids: [0, 2],
